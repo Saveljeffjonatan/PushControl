@@ -1,0 +1,23 @@
+defmodule PushControl.Repo.Migrations.CreateEvents do
+  use Ecto.Migration
+
+  def change do
+    create table(:events, primary_key: false) do
+      add :id, :binary_id, primary_key: true
+      add :enabled, :boolean, default: false, null: false
+      add :interval, :time
+      add :start_time, :utc_datetime
+      add :end_time, :utc_datetime
+      add :archived_at, :utc_datetime
+      add :user_id, references(:users, on_delete: :delete_all, type: :binary_id)
+      add :message_id, references(:messages, on_delete: :nothing, type: :binary_id)
+      add :message_log_id, references(:message_logs, on_delete: :nothing, type: :binary_id)
+
+      timestamps(type: :utc_datetime)
+    end
+
+    create index(:events, [:user_id])
+    create index(:events, [:message_id])
+    create index(:events, [:message_log_id])
+  end
+end
