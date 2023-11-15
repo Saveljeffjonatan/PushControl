@@ -16,3 +16,7 @@
   font-style: normal;
   src: url("/fonts/WorkSans-Bold.ttf");
 }
+
+.button {
+  @apply text-default-brand dark:text-darkMode-brand;
+}

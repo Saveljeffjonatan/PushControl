@@ -17,15 +17,17 @@ module.exports = {
       colors: {
         default: {
           brand: "#030303",
-          heading: "#1b1b1b",
-          text: "#393d41",
+          heading: "#1a1a1a",
+          text: "#3b4044",
           gray: "#b2b2b2",
+          background: "#f0f0f0",
         },
-        light: {
-          brand: "#F5F5F5",
-          heading: "#333333",
-          text: "#666666",
-          gray: "#CCCCCC",
+        darkMode: {
+          brand: "#fdfdfd",
+          heading: "#e6e6e6",
+          text: "#bbbfc4",
+          gray: "#4d4d4d",
+          background: "#0d0d0d",
         },
       },
       fontFamily: {
