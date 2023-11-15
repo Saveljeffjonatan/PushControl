@@ -9,7 +9,7 @@ defmodule PushControl.Events.Event do
     field :interval, :time
     field :start_time, :date
     field :end_time, :date
-    field :archived_at, :date
+    field :archived_at, :date, default: nil
     belongs_to :user, PushControl.Accounts.User
     belongs_to :message, PushControl.Messages.Message
     belongs_to :message_log, PushControl.Messages.MessageLog
@@ -27,8 +27,7 @@ defmodule PushControl.Events.Event do
       :end_time,
       :archived_at,
       :user_id,
-      :message_id,
-      :message_log_id
+      :message_id
     ])
     |> validate_required([
       :interval,
