@@ -11,10 +11,29 @@ module.exports = {
     "../lib/push_control_web.ex",
     "../lib/push_control_web/**/*.*ex",
   ],
+  darkMode: "class",
   theme: {
     extend: {
       colors: {
-        brand: "#FD4F00",
+        default: {
+          brand: "#030303",
+          heading: "#1b1b1b",
+          text: "#393d41",
+          gray: "#b2b2b2",
+        },
+        light: {
+          brand: "#F5F5F5",
+          heading: "#333333",
+          text: "#666666",
+          gray: "#CCCCCC",
+        },
+      },
+      fontFamily: {
+        brand: ["WorkSans", "sans-serif"],
+      },
+      fontWeight: {
+        regular: "normal",
+        bold: "bold",
       },
     },
   },
