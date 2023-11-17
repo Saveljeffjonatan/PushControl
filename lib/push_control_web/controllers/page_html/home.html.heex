@@ -13,7 +13,7 @@
         Signed in as: <%= @current_user.email %>
       </p>
     <% end %>
-    <span class="dark:hidden">
+    <span id="toggle_ui_mode_dark" class="dark:hidden cursor-pointer" type="button">
       <svg viewBox="0 0 24 24" fill="none" class="w-6 h-6">
         <path
           fill-rule="evenodd"
@@ -36,7 +36,7 @@
         </path>
       </svg>
     </span>
-    <span class="hidden dark:inline">
+    <span id="toggle_ui_mode_light" class="hidden dark:inline cursor-pointer" type="button">
       <svg
         viewBox="0 0 24 24"
         fill="none"
@@ -55,7 +55,7 @@
       </svg>
     </span>
     <%= if @current_user do %>
-      <.link href={~p"/users/log_out"} method="get" class="button">
+      <.link href={~p"/users/log_out"} method="delete" class="button">
         Sign out
       </.link>
     <% else %>

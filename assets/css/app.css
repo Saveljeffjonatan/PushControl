@@ -7,14 +7,14 @@
   font-family: "WorkSans";
   font-weight: normal;
   font-style: normal;
-  src: url("/fonts/WorkSans-Regular.ttf");
+  src: url("fonts/WorkSans-Regular.ttf");
 }
 
 @font-face {
   font-family: "WorkSans";
   font-weight: bold;
   font-style: normal;
-  src: url("/fonts/WorkSans-Bold.ttf");
+  src: url("fonts/WorkSans-Bold.ttf");
 }
 
 .button {
