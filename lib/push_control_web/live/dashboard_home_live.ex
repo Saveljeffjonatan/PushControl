@@ -82,7 +82,7 @@ defmodule PushControlWeb.DashboardHomeLive do
 
             case Events.create_one_time_event(one_time_event_params) do
               {:ok, _one_time_event} ->
-                {:noreply}
+                {:noreply, update_client_websocket("send_message", message.content, socket)}
             end
         end
 
@@ -104,6 +104,16 @@ defmodule PushControlWeb.DashboardHomeLive do
            to_form(changeset)
          )}
     end
+  end
+
+  defp update_client_websocket("send_message", params, socket) do
+    # Broadcast the message to the channel
+    PushControlWeb.Endpoint.broadcast("room:lobby", "new_msg", %{
+      body: params
+    })
+
+    # Return the updated socket
+    {:noreply, socket}
   end
 end
 
