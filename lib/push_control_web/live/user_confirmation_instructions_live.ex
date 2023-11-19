@@ -5,7 +5,7 @@ defmodule PushControlWeb.UserConfirmationInstructionsLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="mx-auto max-w-2xl h-[100dvh] flex flex-col justify-center">
       <.header class="text-center">
         No confirmation instructions received?
         <:subtitle>We'll send a new confirmation link to your inbox</:subtitle>
