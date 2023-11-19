@@ -9,7 +9,6 @@ defmodule PushControl.Accounts.User do
     field :hashed_password, :string, redact: true
     field :hashed_private_key, :string, redact: true
     field :confirmed_at, :naive_datetime
-    has_many :message_logs, PushControl.Messages.MessageLog
 
     timestamps(type: :utc_datetime)
   end

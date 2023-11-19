@@ -15,7 +15,9 @@ defmodule PushControl.Messages.MessageLog do
   @doc false
   def changeset(message_log, attrs) do
     message_log
-    |> cast(attrs, [:user_id, :events, :one_time_events])
+    |> cast(attrs, [:user_id])
+    |> cast_assoc(:events)
+    |> cast_assoc(:one_time_events)
     |> validate_required([:user_id])
   end
 end

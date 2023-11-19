@@ -3,8 +3,8 @@ defmodule PushControlWeb.UserLoginLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-2xl">
-      <.header class="text-center">
+    <div class="mx-auto max-w-2xl h-[100dvh] flex flex-col justify-center">
+      <.header class="text-center text-2xl">
         Sign in to account
         <:subtitle>
           Don't have an account?
@@ -26,7 +26,10 @@ defmodule PushControlWeb.UserLoginLive do
           </.link>
         </:actions>
         <:actions>
-          <.button phx-disable-with="Signing in..." class="w-full">
+          <.button
+            phx-disable-with="Signing in..."
+            class="w-full bg-default-brand dark:bg-darkMode-brand"
+          >
             Sign in <span aria-hidden="true">→</span>
           </.button>
         </:actions>

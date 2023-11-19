@@ -6,7 +6,7 @@ defmodule PushControlWeb.UserRegistrationLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="mx-auto max-w-sm h-[100dvh] flex flex-col justify-center">
       <.header class="text-center">
         Register for an account
         <:subtitle>

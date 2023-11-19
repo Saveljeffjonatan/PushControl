@@ -27,7 +27,8 @@ defmodule PushControl.Events.Event do
       :end_time,
       :archived_at,
       :user_id,
-      :message_id
+      :message_id,
+      :message_log_id
     ])
     |> validate_required([
       :interval,
