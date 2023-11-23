@@ -113,8 +113,36 @@ defmodule PushControl.Messages do
       [%MessageLog{}, ...]
 
   """
-  def list_message_log do
-    Repo.all(MessageLog)
+  def list_message_log(page_number, page_size \\ 8) do
+    MessageLog
+    |> join(:inner, [m], ote in assoc(m, :one_time_events))
+    |> group_by([m], m.id)
+    |> preload(one_time_events: :message)
+    |> limit(^page_size)
+    |> order_by([m], desc: m.inserted_at)
+    |> offset(^((page_number - 1) * page_size))
+    |> Repo.all()
+  end
+
+  @doc """
+  Return the count of message_log.
+
+  ## Examples
+      iex> count_message_log()
+      100
+  """
+  def count_messages_in_log do
+    one_time_event_subquery =
+      from m in MessageLog,
+        join: ote in assoc(m, :one_time_events),
+        select: m.id,
+        distinct: true
+
+    query =
+      from m in subquery(one_time_event_subquery),
+        select: count(m.id)
+
+    Repo.one(query)
   end
 
   @doc """

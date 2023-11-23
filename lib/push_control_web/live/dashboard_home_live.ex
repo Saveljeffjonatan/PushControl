@@ -1,128 +1,82 @@
 defmodule PushControlWeb.DashboardHomeLive do
   use PushControlWeb, :live_view
 
-  alias PushControl.Events
-  alias PushControl.{Messages, Messages.Message}
+  alias PushControl.Messages
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-2xl h-[100dvh] flex flex-col justify-center">
-      <.header class="text-center text-2xl">
-        Send a one time message to your users
-      </.header>
-
-      <.simple_form
-        for={@form}
-        phx-submit="one_time_message"
-        phx-change="validate"
-        phx-update="ignore"
-      >
-        <.input
-          field={@form[:event_message]}
-          label="Message"
-          type="textarea"
-          placeholder="Your message to be sent..."
-          autocomplete="off"
-          phx-debounce="blur"
-          required
-        />
-
-        <:actions>
+    <div class="mx-auto w-full grid grid-cols-2 gap-4 p-6">
+      <div class="p-4 bg-default-gray dark:bg-darkMode-gray text-default-text dark:text-darkMode-text">
+        <.header class="text-center text-2xl">
+          Create events
+        </.header>
+      </div>
+      <div class="p-4 bg-default-gray dark:bg-darkMode-gray text-default-text dark:text-darkMode-text">
+        <.header class="text-center text-2xl">
+          Schedule a message event to be sent at a later time
+        </.header>
+      </div>
+      <div class="h-full relative col-span-2 p-4 bg-default-gray dark:bg-darkMode-gray text-default-text dark:text-darkMode-text">
+        <.header class="text-center text-2xl">
+          Message log of recent history
+        </.header>
+        <.table id="message_log_table" rows={@message_log}>
+          <:col :let={item} label="Event Message">
+            <%= Enum.map(item.one_time_events, fn event -> event.message.content end) %>
+          </:col>
+          <:col :let={item} label="Created at">
+            <%= item.inserted_at %>
+          </:col>
+        </.table>
+        <div class="absolute bottom-5 w-full flex justify-center items-center">
           <.button
-            phx-disable-with="Sending request ..."
-            class="w-full bg-default-brand dark:bg-darkMode-brand"
+            class="h-fit"
+            phx-click="change_page"
+            phx-value-page={@page_number - 1}
+            disabled={@page_number == 1}
           >
-            Send request <span aria-hidden="true">→</span>
+            -
           </.button>
-        </:actions>
-      </.simple_form>
+          <p class="p-4">Page <%= @page_number %> of <%= @total_pages %></p>
+          <.button
+            class="h-fit"
+            phx-click="change_page"
+            phx-value-page={@page_number + 1}
+            disabled={@page_number == @total_pages}
+          >
+            +
+          </.button>
+        </div>
+      </div>
     </div>
     """
   end
 
   def mount(_params, _session, socket) do
-    socket =
-      assign(
-        socket,
-        form: to_form(Messages.change_message(%Message{}))
-      )
+    page_number = 1
+    page_size = 6
+    message_log = Messages.list_message_log(page_number, page_size)
+    total_records = Messages.count_messages_in_log()
 
-    {:ok, socket}
+    total_pages =
+      div(total_records, page_size) + if rem(total_records, page_size) > 0, do: 1, else: 0
+
+    {:ok,
+     assign(socket,
+       message_log: message_log,
+       page_number: page_number,
+       total_pages: total_pages,
+       page_size: page_size,
+       total_records: total_records
+     )}
   end
 
-  def handle_event("validate", %{"message" => params}, socket) do
-    changeset =
-      %Message{} |> Messages.change_message(params) |> Map.put(:action, :validate)
+  def handle_event("change_page", %{"page" => page_number}, socket) do
+    page_number = String.to_integer(page_number)
+    page_size = socket.assigns.page_size
 
-    {:noreply, assign(socket, :form, to_form(changeset))}
-  end
+    message_log = Messages.list_message_log(page_number, page_size)
 
-  def handle_event("one_time_message", %{"message" => params}, socket) do
-    # Step 1: Create a message
-    params = %{"content" => params["event_message"]}
-
-    case Messages.create_message(params) do
-      {:ok, message} ->
-        # Step 2: Create a one-time event
-
-        message_log_params = %{
-          message_id: message.id,
-          user_id: socket.assigns.current_user.id
-        }
-
-        case Messages.create_message_log(message_log_params) do
-          {:ok, message_log} ->
-            {:noreply}
-
-            one_time_event_params = %{
-              message_id: message.id,
-              user_id: socket.assigns.current_user.id,
-              message_log_id: message_log.id
-            }
-
-            case Events.create_one_time_event(one_time_event_params) do
-              {:ok, _one_time_event} ->
-                {:noreply, update_client_websocket("send_message", message.content, socket)}
-            end
-        end
-
-        # Clear the current form
-        changeset = Messages.change_message(%Message{})
-
-        {:noreply,
-         assign(
-           socket |> put_flash(:info, "Message successfully sent!"),
-           :form,
-           to_form(changeset)
-         )}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply,
-         assign(
-           socket |> put_flash(:error, changeset),
-           :form,
-           to_form(changeset)
-         )}
-    end
-  end
-
-  defp update_client_websocket("send_message", params, socket) do
-    # Broadcast the message to the channel
-    PushControlWeb.Endpoint.broadcast("room:lobby", "new_msg", %{
-      body: params
-    })
-
-    # Return the updated socket
-    {:noreply, socket}
+    {:noreply, assign(socket, message_log: message_log, page_number: page_number)}
   end
 end
-
-# case Messages.create_message_log(message_log_params) do
-#   {:ok, message_log} ->
-#     # Handle success
-#     {:noreply, assign(socket, :form, to_form(message_log.changeset))}
-
-#   {:error, changeset} ->
-#     # Handle error in message log creation
-#     {:noreply, assign(socket, :form, to_form(changeset))}
-# end
