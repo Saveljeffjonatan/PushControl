@@ -1,5 +1,5 @@
-defmodule PushControlWeb.Components.Dashboard.CreateOneTimeMessageComponent do
-  use PushControlWeb, :live_component
+defmodule PushControlWeb.CreateEventLive do
+  use PushControlWeb, :live_view
 
   alias PushControl.Events
   alias PushControl.{Messages, Messages.Message}

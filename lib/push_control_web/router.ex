@@ -68,7 +68,8 @@ defmodule PushControlWeb.Router do
       on_mount: [{PushControlWeb.UserAuth, :ensure_authenticated}] do
       live "/users/settings", UserSettingsLive, :edit
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
-      live "/dashboard", DashboardHomeLive, :create
+      live "/dashboard", DashboardHomeLive, :view
+      live "/dashboard/create_events", CreateEventLive, :new
     end
   end
 
