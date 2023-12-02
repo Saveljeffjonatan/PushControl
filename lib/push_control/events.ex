@@ -49,12 +49,8 @@ defmodule PushControl.Events do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_event(user, message, attrs \\ %{}) do
-    user
-    |> Ecto.build_assoc(:user)
-
-    message
-    |> Ecto.build_assoc(:message)
+  def create_event(attrs \\ %{}) do
+    %Event{}
     |> Event.changeset(attrs)
     |> Repo.insert()
   end

@@ -5,13 +5,14 @@ defmodule PushControl.Events.Event do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "events" do
+    field :content, :string
     field :enabled, :boolean, default: false
     field :interval, :time
-    field :start_time, :date
-    field :end_time, :date
+    field :start_time, :utc_datetime
+    field :end_time, :utc_datetime
+    field :time_zone, :string
     field :archived_at, :date, default: nil
     belongs_to :user, PushControl.Accounts.User
-    belongs_to :message, PushControl.Messages.Message
     belongs_to :message_log, PushControl.Messages.MessageLog
 
     timestamps(type: :utc_datetime)
@@ -27,15 +28,14 @@ defmodule PushControl.Events.Event do
       :end_time,
       :archived_at,
       :user_id,
-      :message_id,
+      :content,
+      :time_zone,
       :message_log_id
     ])
     |> validate_required([
-      :interval,
       :start_time,
-      :end_time,
-      :user_id,
-      :message_id
+      :content,
+      :user_id
     ])
   end
 end

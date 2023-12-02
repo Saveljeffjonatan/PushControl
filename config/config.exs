@@ -31,6 +31,8 @@ config :push_control, PushControlWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :push_control, PushControl.Mailer, adapter: Swoosh.Adapters.Local
 
+config :elixir, :time_zone_database, Tzdata.TimeZoneDatabase
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",

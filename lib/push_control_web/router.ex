@@ -70,6 +70,7 @@ defmodule PushControlWeb.Router do
       live "/users/settings/confirm_email/:token", UserSettingsLive, :confirm_email
       live "/dashboard", DashboardHomeLive, :view
       live "/dashboard/create_events", CreateEventLive, :new
+      live "/dashboard/create_scheduled_events", CreateScheduledEventLive, :new
     end
   end
 
