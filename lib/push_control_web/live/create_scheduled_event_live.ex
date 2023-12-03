@@ -1,8 +1,7 @@
 defmodule PushControlWeb.CreateScheduledEventLive do
   use PushControlWeb, :live_view
 
-  alias PushControl.Events
-  alias PushControl.Messages
+  alias PushControl.{Events, Messages}
 
   def render(assigns) do
     ~H"""
@@ -11,7 +10,7 @@ defmodule PushControlWeb.CreateScheduledEventLive do
         Create New Event
       </.header>
 
-      <.simple_form for={@form} phx-submit="create_event" phx-update="ignore">
+      <.simple_form for={@form} phx-submit="create_event">
         <div class="flex flex-col">
           <.input
             field={@form[:content]}
@@ -47,7 +46,7 @@ defmodule PushControlWeb.CreateScheduledEventLive do
     socket =
       assign(
         socket,
-        form: to_form(Events.change_event(%PushControl.Events.Event{}))
+        form: to_form(Events.change_event(%Events.Event{}))
       )
 
     {:ok, socket}
@@ -73,18 +72,10 @@ defmodule PushControlWeb.CreateScheduledEventLive do
           "message_log_id" => message_log.id
         }
 
-        case Events.create_event(event_params_with_log_id) do
-          {:ok, event} ->
-            # Handle successful event creation
-            new_changeset = Events.change_event(%Events.Event{})
-            {:noreply, assign(socket, form: to_form(new_changeset))}
-
-          {:error, %Ecto.Changeset{} = changeset} ->
-            # Handle error in creating event
-            {:noreply, assign(socket, :form, to_form(changeset))}
-        end
+        {:ok, _event} = Events.create_event(event_params_with_log_id)
 
         new_changeset = Events.change_event(%Events.Event{})
+
         {:noreply, assign(socket, form: to_form(new_changeset))}
 
       {:error, _changeset} ->
@@ -103,7 +94,7 @@ defmodule PushControlWeb.CreateScheduledEventLive do
     %{params | "start_time" => start_time_utc, "end_time" => end_time_utc}
   end
 
-  defp convert_datetime_to_utc(datetime, tz) do
+  defp convert_datetime_to_utc(datetime, _tz) do
     case DateTime.from_iso8601("#{datetime}:00Z") do
       {:ok, datetime_utc, 0} ->
         DateTime.to_naive(datetime_utc)
