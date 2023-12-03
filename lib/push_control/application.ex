@@ -17,7 +17,8 @@ defmodule PushControl.Application do
       # Start a worker by calling: PushControl.Worker.start_link(arg)
       # {PushControl.Worker, arg},
       # Start to serve requests, typically the last entry
-      PushControlWeb.Endpoint
+      PushControlWeb.Endpoint,
+      PushControl.Scheduler.Quantum
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

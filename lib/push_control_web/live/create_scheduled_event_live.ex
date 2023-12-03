@@ -74,7 +74,7 @@ defmodule PushControlWeb.CreateScheduledEventLive do
         }
 
         case Events.create_event(event_params_with_log_id) do
-          {:ok, event} ->
+          {:ok, _event} ->
             # Handle successful event creation
             new_changeset = Events.change_event(%Events.Event{})
             {:noreply, assign(socket, form: to_form(new_changeset))}
@@ -103,7 +103,7 @@ defmodule PushControlWeb.CreateScheduledEventLive do
     %{params | "start_time" => start_time_utc, "end_time" => end_time_utc}
   end
 
-  defp convert_datetime_to_utc(datetime, tz) do
+  defp convert_datetime_to_utc(datetime, _tz) do
     case DateTime.from_iso8601("#{datetime}:00Z") do
       {:ok, datetime_utc, 0} ->
         DateTime.to_naive(datetime_utc)
