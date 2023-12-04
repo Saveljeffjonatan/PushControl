@@ -1,5 +1,5 @@
 defmodule PushControlWeb.CreateEventLive do
-  use PushControlWeb, :live_view
+  use PushControlWeb, :live_component
 
   alias PushControl.Events
   alias PushControl.Messages
@@ -14,6 +14,7 @@ defmodule PushControlWeb.CreateEventLive do
       <.simple_form
         for={@form}
         phx-submit="one_time_message"
+        phx-target={@myself}
         phx-change="validate"
         phx-update="ignore"
       >
@@ -41,10 +42,11 @@ defmodule PushControlWeb.CreateEventLive do
     """
   end
 
-  def mount(_params, _session, socket) do
+  def update(params, socket) do
     socket =
       assign(
         socket,
+        current_user: params.current_user,
         form: to_form(Events.change_one_time_event(%PushControl.Events.One_Time_Event{}))
       )
 

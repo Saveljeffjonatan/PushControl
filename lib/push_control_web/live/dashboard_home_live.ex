@@ -10,6 +10,11 @@ defmodule PushControlWeb.DashboardHomeLive do
         <.header class="text-center text-2xl">
           Create events
         </.header>
+        <.live_component
+          id="test"
+          current_user={@current_user}
+          module={PushControlWeb.CreateEventLive}
+        />
       </div>
       <div class="p-4 bg-default-gray dark:bg-darkMode-gray text-default-text dark:text-darkMode-text">
         <.header class="text-center text-2xl">
