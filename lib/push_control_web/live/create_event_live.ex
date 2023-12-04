@@ -11,13 +11,7 @@ defmodule PushControlWeb.CreateEventLive do
         Send a one time message to your users
       </.header>
 
-      <.simple_form
-        for={@form}
-        phx-submit="one_time_message"
-        phx-target={@myself}
-        phx-change="validate"
-        phx-update="ignore"
-      >
+      <.simple_form for={@form} phx-submit="one_time_message" phx-target={@myself}>
         <.input
           field={@form[:content]}
           name="content"
@@ -47,22 +41,19 @@ defmodule PushControlWeb.CreateEventLive do
       assign(
         socket,
         current_user: params.current_user,
-        form: to_form(Events.change_one_time_event(%PushControl.Events.One_Time_Event{}))
+        form: to_form(Events.change_one_time_event(%Events.One_Time_Event{}))
       )
 
     {:ok, socket}
   end
 
-  def handle_event("validate", %{"content" => content}, socket) do
+  def handle_event("one_time_message", %{"content" => content}, socket) do
     one_time_event = socket.assigns.form.source.data
+    user_id = socket.assigns.current_user.id
 
     changeset = Events.change_one_time_event(one_time_event, %{"content" => content})
 
     {:noreply, assign(socket, form: to_form(changeset))}
-  end
-
-  def handle_event("event", %{"content" => content}, socket) do
-    user_id = socket.assigns.current_user.id
 
     message_log_params = %{
       user_id: user_id
@@ -79,14 +70,17 @@ defmodule PushControlWeb.CreateEventLive do
         case Events.create_one_time_event(one_time_event_params) do
           {:ok, _one_time_event} ->
             update_client_websocket("send_message", content, socket)
-            {:noreply, socket}
+
+            # Reset the form on success
+            new_changeset = Events.change_one_time_event(%Events.One_Time_Event{})
+            {:noreply, assign(socket, form: to_form(new_changeset))}
 
           {:error, %Ecto.Changeset{} = changeset} ->
-            {:noreply, assign(socket, :form, to_form(changeset))}
+            {:noreply, assign(socket, form: to_form(changeset))}
         end
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :form, to_form(changeset))}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 

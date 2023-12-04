@@ -27,7 +27,7 @@ defmodule PushControlWeb.DashboardHomeLive do
         </.header>
         <.table id="message_log_table" rows={@message_log}>
           <:col :let={item} label="Event Message">
-            <%= Enum.map(item.one_time_events, fn event -> event.message.content end) %>
+            <%= Enum.map(item.one_time_events, fn event -> event.content end) %>
           </:col>
           <:col :let={item} label="Created at">
             <%= item.inserted_at %>

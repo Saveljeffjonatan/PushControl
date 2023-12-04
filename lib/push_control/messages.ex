@@ -10,11 +10,9 @@ defmodule PushControl.Messages do
 
   def list_message_log(page_number, page_size \\ 8) do
     MessageLog
-    |> join(:inner, [m], ote in assoc(m, :one_time_events))
-    |> group_by([m], m.id)
-    |> preload(one_time_events: :message)
+    |> preload(:one_time_events)
     |> limit(^page_size)
-    |> order_by([m], desc: m.inserted_at)
+    |> order_by(desc: :inserted_at)
     |> offset(^((page_number - 1) * page_size))
     |> Repo.all()
   end

@@ -12,13 +12,18 @@ defmodule PushControl.Application do
       PushControl.Repo,
       {DNSCluster, query: Application.get_env(:push_control, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: PushControl.PubSub},
+
       # Start the Finch HTTP client for sending emails
       {Finch, name: PushControl.Finch},
+
+      # Start the Quantum job scheduler
+      PushControl.Scheduler.Quantum,
+
       # Start a worker by calling: PushControl.Worker.start_link(arg)
       # {PushControl.Worker, arg},
+
       # Start to serve requests, typically the last entry
-      PushControlWeb.Endpoint,
-      PushControl.Scheduler.Quantum
+      PushControlWeb.Endpoint
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
