@@ -36,12 +36,21 @@ defmodule PushControlWeb.CreateEventLive do
     """
   end
 
+  def mount(socket) do
+    socket =
+      assign(
+        socket,
+        form: to_form(Events.change_one_time_event(%Events.One_Time_Event{}))
+      )
+
+    {:ok, socket}
+  end
+
   def update(params, socket) do
     socket =
       assign(
         socket,
-        current_user: params.current_user,
-        form: to_form(Events.change_one_time_event(%Events.One_Time_Event{}))
+        current_user: params.current_user
       )
 
     {:ok, socket}
@@ -51,7 +60,8 @@ defmodule PushControlWeb.CreateEventLive do
     one_time_event = socket.assigns.form.source.data
     user_id = socket.assigns.current_user.id
 
-    changeset = Events.change_one_time_event(one_time_event, %{"content" => content})
+    changeset =
+      Events.change_one_time_event(one_time_event, %{"content" => content})
 
     {:noreply, assign(socket, form: to_form(changeset))}
 
@@ -72,7 +82,12 @@ defmodule PushControlWeb.CreateEventLive do
             update_client_websocket("send_message", content, socket)
 
             # Reset the form on success
-            new_changeset = Events.change_one_time_event(%Events.One_Time_Event{})
+            new_changeset =
+              Events.change_one_time_event(%Events.One_Time_Event{}, %{
+                "content" => "",
+                "user_id" => user_id
+              })
+
             {:noreply, assign(socket, form: to_form(new_changeset))}
 
           {:error, %Ecto.Changeset{} = changeset} ->
