@@ -6,12 +6,12 @@ defmodule PushControlWeb.CreateEventLive do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-2xl h-[100dvh] flex flex-col justify-center">
+    <div class="mx-auto max-w-2xl flex flex-col justify-center">
       <.header class="text-center text-2xl">
         Send a one time message to your users
       </.header>
 
-      <.simple_form for={@form} phx-submit="one_time_message" phx-target={@myself}>
+      <.simple_form for={@form} phx-submit="one_time_message" phx-target={@myself} class="pt-10">
         <.input
           field={@form[:content]}
           name="content"

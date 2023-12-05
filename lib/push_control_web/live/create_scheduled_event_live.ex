@@ -1,16 +1,18 @@
 defmodule PushControlWeb.CreateScheduledEventLive do
-  use PushControlWeb, :live_view
+  use PushControlWeb, :live_component
+
+  import PushControlWeb.Utils.QuantumScheduler
 
   alias PushControl.{Events, Messages}
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-2xl h-[100dvh] flex flex-col justify-center">
+    <div class="mx-auto max-w-2xl flex flex-col justify-center">
       <.header class="text-center text-2xl">
         Create New Event
       </.header>
 
-      <.simple_form for={@form} phx-submit="create_event">
+      <.simple_form for={@form} phx-submit="create_event" phx-target={@myself} class="pt-10">
         <div class="flex flex-col">
           <.input
             field={@form[:content]}
@@ -42,11 +44,21 @@ defmodule PushControlWeb.CreateScheduledEventLive do
     """
   end
 
-  def mount(_params, _session, socket) do
+  def mount(socket) do
     socket =
       assign(
         socket,
         form: to_form(Events.change_event(%Events.Event{}))
+      )
+
+    {:ok, socket}
+  end
+
+  def update(params, socket) do
+    socket =
+      assign(
+        socket,
+        current_user: params.current_user
       )
 
     {:ok, socket}
@@ -73,6 +85,8 @@ defmodule PushControlWeb.CreateScheduledEventLive do
         }
 
         {:ok, _event} = Events.create_event(event_params_with_log_id)
+
+        schedule_job()
 
         new_changeset = Events.change_event(%Events.Event{})
 

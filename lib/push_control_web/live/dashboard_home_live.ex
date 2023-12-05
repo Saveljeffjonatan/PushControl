@@ -11,17 +11,23 @@ defmodule PushControlWeb.DashboardHomeLive do
           Create events
         </.header>
         <.live_component
-          id="test"
+          id="single_events"
           current_user={@current_user}
           module={PushControlWeb.CreateEventLive}
         />
       </div>
+
       <div class="p-4 bg-default-gray dark:bg-darkMode-gray text-default-text dark:text-darkMode-text">
         <.header class="text-center text-2xl">
           Schedule a message event to be sent at a later time
         </.header>
+        <.live_component
+          id="schedul_events"
+          current_user={@current_user}
+          module={PushControlWeb.CreateScheduledEventLive}
+        />
       </div>
-      <div class="h-full relative col-span-2 p-4 bg-default-gray dark:bg-darkMode-gray text-default-text dark:text-darkMode-text">
+      <%!-- <div class="h-full relative col-span-2 p-4 bg-default-gray dark:bg-darkMode-gray text-default-text dark:text-darkMode-text">
         <.header class="text-center text-2xl">
           Message log of recent history
         </.header>
@@ -52,7 +58,7 @@ defmodule PushControlWeb.DashboardHomeLive do
             +
           </.button>
         </div>
-      </div>
+      </div> --%>
     </div>
     """
   end
