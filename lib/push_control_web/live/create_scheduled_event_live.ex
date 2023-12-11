@@ -87,7 +87,15 @@ defmodule PushControlWeb.CreateScheduledEventLive do
 
         {:ok, event} = Events.create_event(event_params_with_log_id)
         IO.inspect(event, label: "Created")
-        JobCache.add_job("job1", %{time: "12:00", task: "Do something"})
+
+        data = %{
+          "start_time" => utc_event_params["start_time"],
+          "end_time" => utc_event_params["end_time"],
+          "interval" => interval,
+          "data" => %{content: content}
+        }
+
+        JobCache.add_job("job1", data)
         schedule_job()
 
         new_changeset = Events.change_event(%Events.Event{})
