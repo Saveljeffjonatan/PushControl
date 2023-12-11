@@ -19,6 +19,9 @@ defmodule PushControl.Application do
       # Start the Quantum job scheduler
       PushControl.Scheduler.Quantum,
 
+      # Start the ETS table
+      PushControl.Ets.JobCache,
+
       # Start a worker by calling: PushControl.Worker.start_link(arg)
       # {PushControl.Worker, arg},
 
