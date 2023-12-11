@@ -1,22 +1,17 @@
 defmodule PushControlWeb.CreateEventLive do
-  use PushControlWeb, :live_view
+  use PushControlWeb, :live_component
 
   alias PushControl.Events
   alias PushControl.Messages
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-2xl h-[100dvh] flex flex-col justify-center">
+    <div class="mx-auto max-w-2xl flex flex-col justify-center">
       <.header class="text-center text-2xl">
         Send a one time message to your users
       </.header>
 
-      <.simple_form
-        for={@form}
-        phx-submit="one_time_message"
-        phx-change="validate"
-        phx-update="ignore"
-      >
+      <.simple_form for={@form} phx-submit="one_time_message" phx-target={@myself} class="pt-10">
         <.input
           field={@form[:content]}
           name="content"
@@ -41,26 +36,34 @@ defmodule PushControlWeb.CreateEventLive do
     """
   end
 
-  def mount(_params, _session, socket) do
+  def mount(socket) do
     socket =
       assign(
         socket,
-        form: to_form(Events.change_one_time_event(%PushControl.Events.One_Time_Event{}))
+        form: to_form(Events.change_one_time_event(%Events.One_Time_Event{}))
       )
 
     {:ok, socket}
   end
 
-  def handle_event("validate", %{"content" => content}, socket) do
-    one_time_event = socket.assigns.form.source.data
+  def update(params, socket) do
+    socket =
+      assign(
+        socket,
+        current_user: params.current_user
+      )
 
-    changeset = Events.change_one_time_event(one_time_event, %{"content" => content})
-
-    {:noreply, assign(socket, form: to_form(changeset))}
+    {:ok, socket}
   end
 
-  def handle_event("event", %{"content" => content}, socket) do
+  def handle_event("one_time_message", %{"content" => content}, socket) do
+    one_time_event = socket.assigns.form.source.data
     user_id = socket.assigns.current_user.id
+
+    changeset =
+      Events.change_one_time_event(one_time_event, %{"content" => content})
+
+    {:noreply, assign(socket, form: to_form(changeset))}
 
     message_log_params = %{
       user_id: user_id
@@ -77,14 +80,22 @@ defmodule PushControlWeb.CreateEventLive do
         case Events.create_one_time_event(one_time_event_params) do
           {:ok, _one_time_event} ->
             update_client_websocket("send_message", content, socket)
-            {:noreply, socket}
+
+            # Reset the form on success
+            new_changeset =
+              Events.change_one_time_event(%Events.One_Time_Event{}, %{
+                "content" => "",
+                "user_id" => user_id
+              })
+
+            {:noreply, assign(socket, form: to_form(new_changeset))}
 
           {:error, %Ecto.Changeset{} = changeset} ->
-            {:noreply, assign(socket, :form, to_form(changeset))}
+            {:noreply, assign(socket, form: to_form(changeset))}
         end
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, :form, to_form(changeset))}
+        {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
 
