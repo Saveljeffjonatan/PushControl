@@ -17,13 +17,13 @@ defmodule PushControl.Ets.JobCache do
 
     # Load job data from file
     case JobPersistance.load_from_file() do
-      true ->
+      :ok ->
         # If loading is successful, proceed with the normal state
         {:ok, %{}}
 
-      _ ->
+      {:error, :file_read_failed} ->
         # Handle error, such as by logging
-        IO.puts("Something went wrong")
+        IO.inspect("Something went wrong with file reading")
         # Even in case of an error, you need to return a valid state
         {:ok, %{}}
     end

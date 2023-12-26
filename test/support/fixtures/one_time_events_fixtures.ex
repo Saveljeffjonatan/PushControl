@@ -1,4 +1,4 @@
-defmodule PushControl.EventsFixtures do
+defmodule PushControl.OneTimeEventsFixtures do
   @moduledoc """
   This module defines test helpers for creating
   entities via the `PushControl.One_Time_Events` context.
