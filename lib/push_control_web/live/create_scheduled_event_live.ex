@@ -4,6 +4,7 @@ defmodule PushControlWeb.CreateScheduledEventLive do
   import PushControlWeb.Utils.QuantumScheduler
 
   alias PushControl.{Events, Messages}
+  alias PushControl.Ets.JobCache
 
   def render(assigns) do
     ~H"""
@@ -84,8 +85,17 @@ defmodule PushControlWeb.CreateScheduledEventLive do
           "message_log_id" => message_log.id
         }
 
-        {:ok, _event} = Events.create_event(event_params_with_log_id)
+        {:ok, event} = Events.create_event(event_params_with_log_id)
+        IO.inspect(event, label: "Created")
 
+        data = %{
+          "start_time" => utc_event_params["start_time"],
+          "end_time" => utc_event_params["end_time"],
+          "interval" => interval,
+          "data" => %{content: content}
+        }
+
+        JobCache.add_job("job1", data)
         schedule_job()
 
         new_changeset = Events.change_event(%Events.Event{})

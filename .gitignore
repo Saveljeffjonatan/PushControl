@@ -35,3 +35,6 @@ push_control-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# ETS data table files
+job_data.bin
+
